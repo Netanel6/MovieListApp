@@ -22,16 +22,13 @@ import com.netanel.movielistapp.pojo.Movie;
 import com.netanel.movielistapp.room.MovieDatabase;
 import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MovieListFragment extends Fragment {
-    public static MovieDatabase movieDatabase;
-    public static RecyclerView recyclerView;
-    public static MovieListAdapter movieListAdapter = new MovieListAdapter();
+    static MovieDatabase movieDatabase;
+    static RecyclerView recyclerView;
+    static MovieListAdapter movieListAdapter = new MovieListAdapter();
     private BottomSheetBehavior mBottomSheetBehavior;
-
 
 
     public MovieListFragment() {
@@ -47,29 +44,23 @@ public class MovieListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_movie_list, container, false);
-
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         getData();
         setSelectMovieInfo(view);
-
     }
 
     private static void getData() {
         class GetData extends AsyncTask<Void, Void, List<Movie>> {
-
             @Override
             protected List<Movie> doInBackground(Void... voids) {
                 List<Movie> allMovies = MovieListFragment.movieDatabase.movieDao().getAllMovies();
                 return allMovies;
-
             }
 
             @Override
@@ -121,19 +112,13 @@ public class MovieListFragment extends Fragment {
                             bottomSheetGenre.setText(builder.toString());
                             Picasso.get().load(movie.getImage()).into(bottomSheetImage);
                         }
-
                     }
 
                     @Override
                     public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                     }
                 });
-
-
             }
-
         });
-
     }
-
 }

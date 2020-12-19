@@ -26,7 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SplashScreenActivity extends AppCompatActivity {
     ImageView splashScreenIcon;
-    public static MovieDatabase movieDatabase;
+     static MovieDatabase movieDatabase;
     ProgressDialog pd;
 
     @Override
@@ -72,8 +72,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
                 setUpAnim();
             }
-
-
             @Override
             public void onFailure(Call<List<Movie>> call, Throwable t) {
                 Toast.makeText(SplashScreenActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();

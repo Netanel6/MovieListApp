@@ -24,10 +24,7 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         setContentView(R.layout.activity_main);
         setUpNavDrawer();
-
     }
-
-
 
     public void setUpNavDrawer() {
         Toolbar toolbar = findViewById(R.id.main_toolbar);
