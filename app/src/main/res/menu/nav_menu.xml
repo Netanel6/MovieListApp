@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/main_menu"
+        >
+        <menu>
+            <item
+                android:id="@+id/nav_movie_list"
+                android:title="@string/movie_list"
+                android:icon="@drawable/ic_movie"
+            />
+            <item
+                android:id="@+id/nav_qr_scanner"
+                android:title="@string/qr_scanner"
+                android:icon="@drawable/ic_qr_code_scanner"
+                />
+        </menu>
+    </item>
+
+            <item android:id="@+id/nav_logout"
+                android:title="@string/logout"
+                android:icon="@drawable/ic_exit_to_app"
+                 />
+
+</menu>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name" translatable="false">MovieListApp</string>
+    <string name="openNavDrawer" translatable="false">Navigation Drawer Open</string>
+    <string name="closeNavDrawer" translatable="false">Navigation Drawer Close</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="movie_list">Movie List</string>
+    <string name="qr_scanner">QR Scanner</string>
+    <string name="logout">Logout</string>
+</resources>

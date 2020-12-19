@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logout">התנתק</string>
+    <string name="qr_scanner">סורק QR</string>
+    <string name="movie_list">רשימת סרטים</string>
+    <string name="main_menu">תפריט ראשי</string>
+</resources>
