@@ -13,23 +13,26 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.room.Room;
 
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.budiyev.android.codescanner.DecodeCallback;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.zxing.Result;
 import com.netanel.movielistapp.pojo.Movie;
+import com.netanel.movielistapp.room.MovieDatabase;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.util.ArrayList;
 
-import retrofit2.Retrofit;
-
 public class QrScannerFragment extends Fragment {
 
+    public static MovieDatabase movieDatabase;
     private static final int TAKE_PICTURE_REQUEST = 1;
     CodeScanner codeScanner;
     CodeScannerView codeScannerView;
@@ -40,6 +43,7 @@ public class QrScannerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        movieDatabase = Room.databaseBuilder(getActivity(), MovieDatabase.class, "moviedb").allowMainThreadQueries().build();
     }
 
     @Override
@@ -72,24 +76,52 @@ public class QrScannerFragment extends Fragment {
         codeScanner = new CodeScanner(getActivity(), codeScannerView);
         codeScanner.startPreview();
 
-        codeScanner.setDecodeCallback(result -> {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(QrScannerFragment.this.getContext(), result.toString(), Toast.LENGTH_SHORT).show();
+        codeScanner.setDecodeCallback(new DecodeCallback() {
+            @Override
+            public void onDecoded(@NonNull Result result) {
+                QrScannerFragment.this.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        parseJsonToObject(result);
 
-
-
-               /*     String title = jsonObject.getS("title").toString();
-                    String image = jsonObject.get("image").toString();
-                    int rating = jsonObject.get("rating").getAsInt();
-                    int releaseYear = jsonObject.get("releaseYear").getAsInt();
-
-                    Movie movie = new Movie(title, image, rating, releaseYear, new ArrayList<>() );*/
-                }
-            });
+                    }
+                });
+            }
         });
+    }
 
+    private void parseJsonToObject(Result result) {
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(result.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        try {
+            String title = obj.getString("title");
+            String image = obj.getString("image");
+            int rating = obj.getInt("rating");
+            int releaseYear = obj.getInt("releaseYear");
+            ArrayList<String> genreListData = new ArrayList<String>();
+            JSONArray jArray = obj.getJSONArray("genre");
+            if (jArray != null) {
+                for (int i = 0; i < jArray.length(); i++) {
+                    genreListData.add(jArray.getString(i));
+                }
+            }
+            ArrayList<String> genre = genreListData;
+            Movie movie = new Movie(title, image, rating, releaseYear, genre);
+            if (QrScannerFragment.movieDatabase.movieDao().isDataExist(title) == 0) {
+                QrScannerFragment.movieDatabase.movieDao().insert(movie);
+                Snackbar.make(getView(), title + " added to the list", BaseTransientBottomBar.LENGTH_SHORT).show();
 
+            } else {
+                Snackbar.make(getView(), title + " is already in the list!", BaseTransientBottomBar.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }

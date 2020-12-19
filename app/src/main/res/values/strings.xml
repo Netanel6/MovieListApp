@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">MovieListApp</string>
+    <string name="app_name" translatable="false">MovieApp</string>
     <string name="openNavDrawer" translatable="false">Navigation Drawer Open</string>
     <string name="closeNavDrawer" translatable="false">Navigation Drawer Close</string>
     <string name="main_menu">Main Menu</string>

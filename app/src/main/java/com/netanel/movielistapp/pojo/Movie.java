@@ -6,6 +6,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 @Entity(tableName = "movie_table")
@@ -35,6 +37,7 @@ public class Movie {
         this.releaseYear = releaseYear;
         this.genre = genre;
     }
+
 
     public int getId() {
         return id;
