@@ -67,6 +67,7 @@ public class MovieListFragment extends Fragment {
             protected void onPostExecute(List<Movie> myDataList) {
                 movieListAdapter = new MovieListAdapter(myDataList);
                 recyclerView.setAdapter(movieListAdapter);
+                movieListAdapter.notifyDataSetChanged();
                 super.onPostExecute(myDataList);
             }
         }

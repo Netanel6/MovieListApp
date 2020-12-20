@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -112,11 +113,23 @@ public class QrScannerFragment extends Fragment {
             }
             ArrayList<String> genre = genreListData;
             Movie movie = new Movie(title, image, rating, releaseYear, genre);
+
             if (QrScannerFragment.movieDatabase.movieDao().isDataExist(title) == 0) {
                 QrScannerFragment.movieDatabase.movieDao().insert(movie);
-                Snackbar.make(getView(), title + " added to the list", BaseTransientBottomBar.LENGTH_SHORT).show();
+
+                Snackbar snackbar = Snackbar.make(getView(), title + " added to the list", Snackbar.LENGTH_LONG);
+                View snackbarLayout = snackbar.getView();
+                TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
+                textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite, 0, 0, 0);
+                snackbar.show();
+//                Snackbar.make(getView(), title + " added to the list", BaseTransientBottomBar.LENGTH_SHORT).show();
             } else {
-                Snackbar.make(getView(), title + " is already in the list!", BaseTransientBottomBar.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(getView(), title + " is already in the list", Snackbar.LENGTH_LONG);
+                View snackbarLayout = snackbar.getView();
+                TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
+                textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_error, 0, 0, 0);
+                snackbar.show();
+//                Snackbar.make(getView(), title + " is already in the list!", BaseTransientBottomBar.LENGTH_SHORT).show();
             }
         } catch (JSONException e) {
             e.printStackTrace();

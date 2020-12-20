@@ -1,5 +1,9 @@
 package com.netanel.movielistapp;
 
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,9 +11,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-
-import android.os.Bundle;
-import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         setContentView(R.layout.activity_main);
         setUpNavDrawer();
+        setNavigationViewItemSelected();
     }
 
     public void setUpNavDrawer() {
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment selectedFragment = null;
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                         System.exit(0);
                         break;
                 }
+
                 if (selectedFragment != null) {
                     getSupportFragmentManager()
                             .beginTransaction()
@@ -67,8 +71,15 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
+
         });
     }
+
+    private void setNavigationViewItemSelected() {
+        navigationView.setCheckedItem(R.id.nav_movie_list);
+        navigationView.getMenu().performIdentifierAction(R.id.nav_movie_list, 0);
+    }
+
     @Override
     public void onBackPressed() {
     }
