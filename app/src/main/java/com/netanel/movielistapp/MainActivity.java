@@ -73,13 +73,11 @@ public class MainActivity extends AppCompatActivity {
                             .beginTransaction()
                             .replace(R.id.fragment_container, selectedFragment)
                             .commit();
-
                 }
                 //Closing the drawer after any selection
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
-
         });
     }
 

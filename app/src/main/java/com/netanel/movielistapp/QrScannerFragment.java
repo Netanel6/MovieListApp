@@ -168,7 +168,7 @@ public class QrScannerFragment extends Fragment {
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> {
                     startActivity(new Intent(getActivity(), MainActivity.class));
-                    getActivity().finishAndRemoveTask();
+                    getActivity().finish();
                 }, 1500);
 
             }
