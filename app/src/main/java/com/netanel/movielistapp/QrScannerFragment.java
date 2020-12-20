@@ -127,7 +127,7 @@ public class QrScannerFragment extends Fragment {
             ArrayList<String> genre = genreListData;
             Movie movie = new Movie(title, image, rating, releaseYear, genre);
             //cant parse html to image! and it wont show as an image in the recycler
-            Log.d("godfatherImage", "parseJsonToObject: " + image);
+            Log.d("ImageUrl", "parseJsonToObject: " + image);
 
             //if the data isnt exist add it to the database else show a snackbar saying the data is already exist
             if (QrScannerFragment.movieDatabase.movieDao().isDataExist(title) == 0) {
