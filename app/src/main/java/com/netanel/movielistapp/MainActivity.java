@@ -68,12 +68,12 @@ public class MainActivity extends AppCompatActivity {
                         System.exit(0);
                         break;
                 }
-
                 if (selectedFragment != null) {
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.fragment_container, selectedFragment)
                             .commit();
+
                 }
                 //Closing the drawer after any selection
                 drawerLayout.closeDrawer(GravityCompat.START);

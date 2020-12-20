@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -137,16 +138,16 @@ public class QrScannerFragment extends Fragment {
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                         .permitAll().build();
                 StrictMode.setThreadPolicy(policy);
+
                 Document document = Jsoup.connect(imageUrl).get();
                 String tags = document.toString();
+
                 int start = tags.indexOf("<img src=\"")+10;
                 int end = tags.indexOf("\" srcset", start);
+                String imageUrlFromHtml = tags.substring(start, end);
+                Log.d("Document", "parseJsonToObject: " + imageUrlFromHtml);
 
-                String src = tags.substring(start, end);
-                Log.d("Document", "parseJsonToObject: " + src);
-
-                Movie movie = new Movie(title, src, rating, releaseYear, genreListData);
-                //cant parse html to image! and it wont show as an image in the recycler
+                Movie movie = new Movie(title, imageUrlFromHtml, rating, releaseYear, genreListData);
 
                 //if the data isnt exist add it to the database else show a snackbar saying the data is already exist
                 if (QrScannerFragment.movieDatabase.movieDao().isDataExist(title) == 0) {
@@ -157,7 +158,6 @@ public class QrScannerFragment extends Fragment {
                     TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
                     textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite, 0, 0, 0);
                     snackbar.show();
-                    startActivity(new Intent(getActivity(), MainActivity.class));
                 } else {
                     Snackbar snackbar = Snackbar.make(getView(), title + " is already in the list", Snackbar.LENGTH_LONG);
                     View snackbarLayout = snackbar.getView();
@@ -165,10 +165,13 @@ public class QrScannerFragment extends Fragment {
                     textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_error, 0, 0, 0);
                     snackbar.show();
                 }
+                final Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    startActivity(new Intent(getActivity(), MainActivity.class));
+                    getActivity().finishAndRemoveTask();
+                }, 1500);
+
             }
-
-
-
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
