@@ -44,6 +44,7 @@ public class QrScannerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Initiate the Room database
         movieDatabase = Room.databaseBuilder(getActivity(), MovieDatabase.class, "moviedb").allowMainThreadQueries().build();
     }
 
@@ -61,6 +62,7 @@ public class QrScannerFragment extends Fragment {
 
 
     private void cameraPermission(View view) {
+        //Check if the user gave camera permission and if not the camera will not open
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) !=
                 PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
@@ -72,6 +74,7 @@ public class QrScannerFragment extends Fragment {
         }
     }
 
+    //Open the qr scanner along with the camera using Budiyev qr scanner library
     private void openQrScanner(View view) {
         codeScannerView = view.findViewById(R.id.qr_scanner);
         codeScanner = new CodeScanner(getActivity(), codeScannerView);
@@ -91,6 +94,7 @@ public class QrScannerFragment extends Fragment {
         });
     }
 
+    //Get the data from the qr scanner and parse it from json and save it to the database
     private void parseJsonToObject(Result result) {
         JSONObject obj = null;
         try {
@@ -114,6 +118,7 @@ public class QrScannerFragment extends Fragment {
             ArrayList<String> genre = genreListData;
             Movie movie = new Movie(title, image, rating, releaseYear, genre);
 
+            //if the data isnt exist add it to the database else show a snackbar saying the data is already exist
             if (QrScannerFragment.movieDatabase.movieDao().isDataExist(title) == 0) {
                 QrScannerFragment.movieDatabase.movieDao().insert(movie);
 

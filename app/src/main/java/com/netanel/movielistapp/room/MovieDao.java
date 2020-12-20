@@ -10,14 +10,14 @@ import com.netanel.movielistapp.pojo.Movie;
 
 import java.util.List;
 
+/*By using DAOs to access my apps' database instead of query builders or direct queries,
+I can preserve separation of concerns, a critical architectural principle.
+DAOs also make it easier for me to mock database access when I test the app.*/
 @Dao
 public interface MovieDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Movie movie);
-
-    @Delete
-    void delete(Movie movie);
 
     @Query("SELECT * FROM movie_table ORDER BY releaseYear DESC ")
     List<Movie> getAllMovies();

@@ -33,6 +33,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        //Initiate the Room database
         movieDatabase = Room.databaseBuilder(getApplicationContext(), MovieDatabase.class, "moviedb").allowMainThreadQueries().build();
         setUpViews();
         getMovies();
@@ -42,6 +43,11 @@ public class SplashScreenActivity extends AppCompatActivity {
         splashScreenIcon = findViewById(R.id.splash_screen_icon);
     }
 
+    /*
+    Using Retrofit library the url is translated to ArrayList and extract the data using objects
+    then a statement says if the data is exist do not save it again if not save it
+    the saving is happening only in the first app loading
+     */
     private void getMovies() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.androidhive.info/json/")
@@ -79,6 +85,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         });
     }
 
+    //fade animation
     private void setUpAnim() {
         final Handler handler = new Handler();
         handler.postDelayed(() -> {

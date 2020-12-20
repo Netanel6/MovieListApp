@@ -30,16 +30,18 @@ public class MovieListFragment extends Fragment {
     static MovieListAdapter movieListAdapter = new MovieListAdapter();
     private BottomSheetBehavior mBottomSheetBehavior;
 
-
+    //Required empty constructor
     public MovieListFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Initiation of the Room database
         movieDatabase = Room.databaseBuilder(getActivity(), MovieDatabase.class, "moviedb").allowMainThreadQueries().build();
     }
 
+    //Inflation of the fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class MovieListFragment extends Fragment {
         setSelectMovieInfo(view);
     }
 
+    //Get data from the database as Objects and attach them to the recycler view
     private static void getData() {
         class GetData extends AsyncTask<Void, Void, List<Movie>> {
             @Override
@@ -75,6 +78,11 @@ public class MovieListFragment extends Fragment {
         gd.execute();
     }
 
+    /*
+    Initiate the bottom sheet when OnClickItem interface is detecting a single click on the specific
+    item in the recycler view
+     */
+
     private void setSelectMovieInfo(View view) {
         LinearLayout mCustomBottomSheet = view.findViewById(R.id.custom_bottom_sheet);
         mBottomSheetBehavior = BottomSheetBehavior.from(mCustomBottomSheet);
@@ -82,18 +90,21 @@ public class MovieListFragment extends Fragment {
         movieListAdapter.setOnItemClick(new MovieListAdapter.OnItemClick() {
             @Override
             public void getItem(Movie movie, int position) {
+                //Checks the state of the bottom sheet
                 if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 } else {
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
 
+                //Add callbacck to the bottom sheet
                 mBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                     @Override
                     public void onStateChanged(@NonNull View bottomSheet, int newState) {
                         TextView bottomSheetTitle, bottomSheetRating, bottomSheetReleaseYear, bottomSheetGenre;
                         ImageView bottomSheetImage;
 
+                        //Initiate the views when the bottom sheet state == to expended
                         if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                             bottomSheetTitle = view.findViewById(R.id.movie_title_bottom_sheet);
                             bottomSheetRating = view.findViewById(R.id.movie_rating_bottom_sheet);
@@ -103,6 +114,7 @@ public class MovieListFragment extends Fragment {
                             bottomSheetTitle.setText(movie.getTitle());
                             bottomSheetRating.setText(String.valueOf(movie.getRating()));
                             bottomSheetReleaseYear.setText(String.valueOf(movie.getReleaseYear()));
+                            //String builder to display the array list of genre as one by one
                             StringBuilder builder = new StringBuilder();
                             for (int i = 0; i < movie.getGenre().size(); i++) {
                                 builder.append(movie.getGenre().get(i));
@@ -111,6 +123,7 @@ public class MovieListFragment extends Fragment {
                                 builder.append(" ");
                             }
                             bottomSheetGenre.setText(builder.toString());
+                            //Load the image url as image view using Picasso library
                             Picasso.get().load(movie.getImage()).into(bottomSheetImage);
                         }
                     }

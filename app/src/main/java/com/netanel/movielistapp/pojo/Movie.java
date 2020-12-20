@@ -6,7 +6,10 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.ArrayList;
-
+/*
+Movie model with all the parameters from the given json URL along with the id(auto generate) for the
+Room data base
+*/
 @Entity(tableName = "movie_table")
 public class Movie {
 
@@ -20,8 +23,10 @@ public class Movie {
     private double rating;
     @ColumnInfo(name = "releaseYear")
     private int releaseYear;
+    //Also used type converter -> check Converters.java
     @ColumnInfo(name = "genre")
     private ArrayList<String> genre;
+
 
     public Movie() {
     }
