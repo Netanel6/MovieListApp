@@ -1,8 +1,10 @@
 package com.netanel.movielistapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +22,6 @@ import androidx.room.Room;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.Result;
 import com.netanel.movielistapp.pojo.Movie;
@@ -29,10 +30,11 @@ import com.netanel.movielistapp.room.MovieDatabase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
-import static android.content.ContentValues.TAG;
 
 public class QrScannerFragment extends Fragment {
 
@@ -40,7 +42,6 @@ public class QrScannerFragment extends Fragment {
     private static final int TAKE_PICTURE_REQUEST = 1;
     CodeScanner codeScanner;
     CodeScannerView codeScannerView;
-
     public QrScannerFragment() {
     }
 
@@ -96,7 +97,11 @@ public class QrScannerFragment extends Fragment {
                 QrScannerFragment.this.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        parseJsonToObject(result);
+                        try {
+                            parseJsonToObject(result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
@@ -104,7 +109,7 @@ public class QrScannerFragment extends Fragment {
     }
 
     //Get the data from the qr scanner and parse it from json and save it to the database
-    private void parseJsonToObject(Result result) {
+    private void parseJsonToObject(Result result) throws IOException {
         JSONObject obj = null;
         try {
             obj = new JSONObject(result.toString());
@@ -114,37 +119,55 @@ public class QrScannerFragment extends Fragment {
         }
         try {
             String title = obj.getString("title");
-            String image = obj.getString("image");
+            String imageUrl = obj.getString("image");
             int rating = obj.getInt("rating");
             int releaseYear = obj.getInt("releaseYear");
-            ArrayList<String> genreListData = new ArrayList<String>();
+            ArrayList<String> genreListData = new ArrayList<>();
             JSONArray jArray = obj.getJSONArray("genre");
             if (jArray != null) {
                 for (int i = 0; i < jArray.length(); i++) {
                     genreListData.add(jArray.getString(i));
                 }
             }
-            ArrayList<String> genre = genreListData;
-            Movie movie = new Movie(title, image, rating, releaseYear, genre);
-            //cant parse html to image! and it wont show as an image in the recycler
-            Log.d("ImageUrl", "parseJsonToObject: " + image);
+            // (Start) <img src=" , (End)  " srcset
+            //full url https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg
+            int SDK_INT = android.os.Build.VERSION.SDK_INT;
+            if (SDK_INT > 8)
+            {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                        .permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+                Document document = Jsoup.connect(imageUrl).get();
+                String tags = document.toString();
+                int start = tags.indexOf("<img src=\"")+10;
+                int end = tags.indexOf("\" srcset", start);
 
-            //if the data isnt exist add it to the database else show a snackbar saying the data is already exist
-            if (QrScannerFragment.movieDatabase.movieDao().isDataExist(title) == 0) {
-                QrScannerFragment.movieDatabase.movieDao().insert(movie);
+                String src = tags.substring(start, end);
+                Log.d("Document", "parseJsonToObject: " + src);
 
-                Snackbar snackbar = Snackbar.make(getView(), title + " added to the list", Snackbar.LENGTH_LONG);
-                View snackbarLayout = snackbar.getView();
-                TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
-                textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite, 0, 0, 0);
-                snackbar.show();
-            } else {
-                Snackbar snackbar = Snackbar.make(getView(), title + " is already in the list", Snackbar.LENGTH_LONG);
-                View snackbarLayout = snackbar.getView();
-                TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
-                textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_error, 0, 0, 0);
-                snackbar.show();
+                Movie movie = new Movie(title, src, rating, releaseYear, genreListData);
+                //cant parse html to image! and it wont show as an image in the recycler
+
+                //if the data isnt exist add it to the database else show a snackbar saying the data is already exist
+                if (QrScannerFragment.movieDatabase.movieDao().isDataExist(title) == 0) {
+                    QrScannerFragment.movieDatabase.movieDao().insert(movie);
+
+                    Snackbar snackbar = Snackbar.make(getView(), title + " added to the list", Snackbar.LENGTH_LONG);
+                    View snackbarLayout = snackbar.getView();
+                    TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
+                    textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite, 0, 0, 0);
+                    snackbar.show();
+                    startActivity(new Intent(getActivity(), MainActivity.class));
+                } else {
+                    Snackbar snackbar = Snackbar.make(getView(), title + " is already in the list", Snackbar.LENGTH_LONG);
+                    View snackbarLayout = snackbar.getView();
+                    TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
+                    textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_error, 0, 0, 0);
+                    snackbar.show();
+                }
             }
+
+
 
         } catch (JSONException e) {
             e.printStackTrace();

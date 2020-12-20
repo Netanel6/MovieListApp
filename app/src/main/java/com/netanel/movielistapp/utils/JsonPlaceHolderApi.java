@@ -12,4 +12,7 @@ public interface JsonPlaceHolderApi {
 
     @GET("movies.json")
     Call<List<Movie>> getMovies();
+
+    @GET("")
+    Call<List<String>> getUrl();
 }

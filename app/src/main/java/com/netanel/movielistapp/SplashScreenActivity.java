@@ -93,9 +93,9 @@ public class SplashScreenActivity extends AppCompatActivity {
             splashScreenIcon.startAnimation(aniFade);
             handler.postDelayed(() -> {
                 startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+                splashScreenIcon.setVisibility(View.INVISIBLE);
                 finish();
             }, 1970);
-            splashScreenIcon.setVisibility(View.INVISIBLE);
         }, 2000);
     }
 }
