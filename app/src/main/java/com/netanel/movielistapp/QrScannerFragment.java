@@ -46,7 +46,6 @@ import java.util.ArrayList;
 public class QrScannerFragment extends Fragment {
 
     static MovieDatabase movieDatabase;
-    private static final int TAKE_PICTURE_REQUEST = 1;
     CodeScanner codeScanner;
     CodeScannerView codeScannerView;
     public QrScannerFragment() {
