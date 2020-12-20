@@ -45,7 +45,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Movie movie = movieList.get(position);
         holder.movieTv.setText(movie.getTitle());
-        Picasso.get().load(movie.getImage()).into(holder.movieIv);
+        Picasso.get().load(movie.getImage()).fit().into(holder.movieIv);
         holder.itemView.setOnClickListener(view -> {
             //catch the adapters' position with the specific model data
             if (onItemClick != null && position != RecyclerView.NO_POSITION) {

@@ -4,12 +4,12 @@
     android:id="@+id/custom_bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="@color/bottom_sheet_color"
+    android:layout_margin="1dp"
+    android:background="@drawable/bottom_sheet_wallpaper"
     android:gravity="center|top"
     android:orientation="horizontal"
     android:weightSum="2"
     app:behavior_hideable="true"
-    android:layout_margin="1dp"
     app:behavior_peekHeight="0dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -23,9 +23,8 @@
 
         <ImageView
             android:id="@+id/movie_bottom_sheet_image"
-            android:layout_width="114dp"
-            android:layout_height="114dp"
-            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@drawable/ic_launcher_foreground"
             android:elevation="16dp" />
 
@@ -39,12 +38,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:elevation="6dp"
             android:id="@+id/movie_title_bottom_sheet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="6dp"
+            android:elevation="6dp"
+            android:fontFamily="casual"
             android:text="Movie Title Here"
             android:textColor="@color/white"
             android:textSize="24sp" />
@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="6dp"
+            android:fontFamily="casual"
             android:text="2014"
             android:textColor="@color/white"
             android:textSize="16sp" />
@@ -65,6 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="6dp"
+            android:fontFamily="casual"
             android:text="Action, Comedy, Sci-Fi"
             android:textColor="@color/white"
             android:textSize="12sp" />
@@ -75,10 +77,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="6dp"
+            android:fontFamily="casual"
             android:text="8.3"
             android:textColor="@color/white"
             android:textSize="14sp" />
-
 
     </LinearLayout>
 

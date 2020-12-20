@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -114,7 +115,7 @@ public class MovieListFragment extends Fragment {
                             bottomSheetTitle.setText(movie.getTitle());
                             bottomSheetRating.setText(String.valueOf(movie.getRating()));
                             bottomSheetReleaseYear.setText(String.valueOf(movie.getReleaseYear()));
-                            //String builder to display the array list of genre as one by one
+                            //String builder to display the array list of genre as one by one strings
                             StringBuilder builder = new StringBuilder();
                             for (int i = 0; i < movie.getGenre().size(); i++) {
                                 builder.append(movie.getGenre().get(i));
@@ -124,7 +125,7 @@ public class MovieListFragment extends Fragment {
                             }
                             bottomSheetGenre.setText(builder.toString());
                             //Load the image url as image view using Picasso library
-                            Picasso.get().load(movie.getImage()).into(bottomSheetImage);
+                            Picasso.get().load(movie.getImage()).fit().into(bottomSheetImage);
                         }
                     }
 

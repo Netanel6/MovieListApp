@@ -3,6 +3,7 @@ package com.netanel.movielistapp;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static android.content.ContentValues.TAG;
+
 public class QrScannerFragment extends Fragment {
 
     static MovieDatabase movieDatabase;
@@ -57,11 +60,18 @@ public class QrScannerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        cameraPermission(view);
+        codeScannerView = view.findViewById(R.id.qr_scanner);
+
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        cameraPermission();
 
-    private void cameraPermission(View view) {
+    }
+
+    private void cameraPermission() {
         //Check if the user gave camera permission and if not the camera will not open
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) !=
                 PackageManager.PERMISSION_GRANTED) {
@@ -69,14 +79,14 @@ public class QrScannerFragment extends Fragment {
                     new String[]{
                             Manifest.permission.CAMERA
                     }, TAKE_PICTURE_REQUEST);
+            new QrScannerFragment();
         } else {
-            openQrScanner(view);
+            openQrScanner();
         }
     }
 
     //Open the qr scanner along with the camera using Budiyev qr scanner library
-    private void openQrScanner(View view) {
-        codeScannerView = view.findViewById(R.id.qr_scanner);
+    private void openQrScanner() {
         codeScanner = new CodeScanner(getActivity(), codeScannerView);
         codeScanner.startPreview();
 
@@ -87,7 +97,6 @@ public class QrScannerFragment extends Fragment {
                     @Override
                     public void run() {
                         parseJsonToObject(result);
-
                     }
                 });
             }
@@ -117,6 +126,8 @@ public class QrScannerFragment extends Fragment {
             }
             ArrayList<String> genre = genreListData;
             Movie movie = new Movie(title, image, rating, releaseYear, genre);
+            //cant parse html to image! and it wont show as an image in the recycler
+            Log.d("godfatherImage", "parseJsonToObject: " + image);
 
             //if the data isnt exist add it to the database else show a snackbar saying the data is already exist
             if (QrScannerFragment.movieDatabase.movieDao().isDataExist(title) == 0) {
@@ -127,15 +138,14 @@ public class QrScannerFragment extends Fragment {
                 TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
                 textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite, 0, 0, 0);
                 snackbar.show();
-//                Snackbar.make(getView(), title + " added to the list", BaseTransientBottomBar.LENGTH_SHORT).show();
             } else {
                 Snackbar snackbar = Snackbar.make(getView(), title + " is already in the list", Snackbar.LENGTH_LONG);
                 View snackbarLayout = snackbar.getView();
                 TextView textView = (TextView)snackbarLayout.findViewById(R.id.snackbar_text);
                 textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_error, 0, 0, 0);
                 snackbar.show();
-//                Snackbar.make(getView(), title + " is already in the list!", BaseTransientBottomBar.LENGTH_SHORT).show();
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
