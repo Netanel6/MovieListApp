@@ -25,6 +25,12 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.Result;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.netanel.movielistapp.pojo.Movie;
 import com.netanel.movielistapp.room.MovieDatabase;
 
@@ -63,6 +69,8 @@ public class QrScannerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         codeScannerView = view.findViewById(R.id.qr_scanner);
+        codeScanner = new CodeScanner(getContext(), codeScannerView);
+
 
     }
 
@@ -74,22 +82,28 @@ public class QrScannerFragment extends Fragment {
     }
 
     private void cameraPermission() {
+
         //Check if the user gave camera permission and if not the camera will not open
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{
-                            Manifest.permission.CAMERA
-                    }, TAKE_PICTURE_REQUEST);
-            new QrScannerFragment();
-        } else {
-            openQrScanner();
-        }
+        Dexter.withContext(getActivity()).withPermission(Manifest.permission.CAMERA).withListener(new PermissionListener() {
+            @Override
+            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                openQrScanner();
+            }
+
+            @Override
+            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                startActivity(new Intent(getActivity(), MainActivity.class));
+            }
+
+            @Override
+            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+            permissionToken.continuePermissionRequest();
+            }
+        }).check();
     }
 
     //Open the qr scanner along with the camera using Budiyev qr scanner library
     private void openQrScanner() {
-        codeScanner = new CodeScanner(getActivity(), codeScannerView);
         codeScanner.startPreview();
 
         codeScanner.setDecodeCallback(new DecodeCallback() {
@@ -168,7 +182,6 @@ public class QrScannerFragment extends Fragment {
                 final Handler handler = new Handler();
                 handler.postDelayed(() -> {
                     startActivity(new Intent(getActivity(), MainActivity.class));
-                    getActivity().finish();
                 }, 1500);
 
             }

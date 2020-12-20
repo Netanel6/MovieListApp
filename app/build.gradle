@@ -63,5 +63,8 @@ dependencies {
     implementation 'com.budiyev.android:code-scanner:2.1.0'
    //Jsoup
     implementation 'org.jsoup:jsoup:1.13.1'
+    //Dexter Permission
+    implementation 'com.karumi:dexter:6.2.2'
+
 
 }
