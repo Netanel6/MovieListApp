@@ -69,8 +69,6 @@ public class QrScannerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         codeScannerView = view.findViewById(R.id.qr_scanner);
         codeScanner = new CodeScanner(getContext(), codeScannerView);
-
-
     }
 
     @Override
